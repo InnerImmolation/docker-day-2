@@ -48,6 +48,7 @@ services:
           /usr/local/bin/install-plugins.sh $${PLUGINS}
           /sbin/tini -- /usr/local/bin/jenkins.sh
 
+
   nexus:
     image: sonatype/nexus3
     environment:

@@ -22,6 +22,7 @@ services:
         -Djava.awt.headless=true
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=admin
+      - JENKINS_OPTS="--prefix=/jenkins"
       - PLUGINS=
         workflow-aggregator
         job-dsl
@@ -38,27 +39,30 @@ services:
     volumes:
       - jenkins_data:/var/jenkins_home
     entrypoint: /bin/bash
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 500M
     command:
       - -c
       - |-
           /usr/local/bin/install-plugins.sh $${PLUGINS}
           /sbin/tini -- /usr/local/bin/jenkins.sh
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 500M
+
 
   nexus:
     image: sonatype/nexus3
-    logging:
-      driver: journald
-      mode: replicated
-      replicas: 1
+    environment:
+      NEXUS_CONTEXT: nexus
+    deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: '0.75'
           memory: 500M
+    logging:
+      driver: journald
+
 
 volumes:
   jenkins_data:
